@@ -24,6 +24,7 @@ class TopTabsTest: BaseTestCase {
         waitUntilPageLoad()
         waitForTabsButton()
         // The tabs counter shows the correct number
+        waitForExistence(app.buttons["Show Tabs"])
         let tabsOpen = app.buttons["Show Tabs"].value
         XCTAssertEqual("2", tabsOpen as? String)
 
@@ -194,12 +195,14 @@ class TopTabsTest: BaseTestCase {
             app.buttons["Show Tabs"].press(forDuration: 1)
             waitForExistence(app.cells["quick_action_new_tab"])
             XCTAssertTrue(app.cells["quick_action_new_tab"].exists)
+            waitForExistence(app.cells["tab_close"])
             XCTAssertTrue(app.cells["tab_close"].exists)
 
             // Open New Tab
             app.cells["quick_action_new_tab"].tap()
             waitForTabsButton()
             checkNumberOfTabsExpectedToBeOpen(expectedNumberOfTabsOpen: 2)
+            waitForExistence(app.collectionViews.cells["Home"])
             app.collectionViews.cells["Home"].firstMatch.tap()
 
             // Close tab
@@ -207,10 +210,12 @@ class TopTabsTest: BaseTestCase {
             waitForExistence(app.buttons["Show Tabs"])
             app.buttons["Show Tabs"].press(forDuration: 1)
             waitForExistence(app.cells["quick_action_new_tab"])
+            waitForExistence(app.cells["tab_close"])
             app.cells["tab_close"].tap()
             checkNumberOfTabsExpectedToBeOpen(expectedNumberOfTabsOpen: 1)
 
             // Go to Private Mode
+            waitForExistence(app.collectionViews.cells["Home"])
             app.collectionViews.cells["Home"].firstMatch.tap()
             navigator.nowAt(HomePanelsScreen)
             waitForExistence(app.buttons["Show Tabs"])
@@ -290,12 +295,14 @@ class TopTabsTestIphone: IphoneOnlyTestCase {
         app.webViews.links.staticTexts[toastUrl["link"]!].press(forDuration: 1)
         waitForExistence(app.sheets.buttons["Open in New Tab"])
         app.sheets.buttons["Open in New Tab"].press(forDuration: 1)
+        waitForExistence(app.buttons["Switch"])
         app.buttons["Switch"].tap()
 
         // Check that the tab has changed
         waitUntilPageLoad()
         waitForValueContains(app.textFields["url"], value: toastUrl["urlLabel"]!)
         XCTAssertTrue(app.staticTexts[toastUrl["link"]!].exists)
+        waitForExistence(app.buttons["Show Tabs"])
         let numTab = app.buttons["Show Tabs"].value as? String
         XCTAssertEqual("2", numTab)
 
@@ -304,9 +311,11 @@ class TopTabsTestIphone: IphoneOnlyTestCase {
         navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
         navigator.openURL(toastUrl["url"]!)
         waitUntilPageLoad()
+        waitForExistence(app.webViews.links[toastUrl["link"]!])
         app.webViews.links[toastUrl["link"]!].press(forDuration: 1)
         waitForExistence(app.sheets.buttons["Open in New Private Tab"])
         app.sheets.buttons["Open in New Private Tab"].press(forDuration: 1)
+        waitForExistence(app.buttons["Switch"])
         app.buttons["Switch"].tap()
 
         // Check that the tab has changed
@@ -314,6 +323,7 @@ class TopTabsTestIphone: IphoneOnlyTestCase {
         waitForExistence(app.textFields["url"], timeout: 5)
         waitForValueContains(app.textFields["url"], value: toastUrl["urlLabel"]!)
         XCTAssertTrue(app.staticTexts[toastUrl["link"]!].exists)
+        waitForExistence(app.buttons["Show Tabs"])
         let numPrivTab = app.buttons["Show Tabs"].value as? String
         XCTAssertEqual("2", numPrivTab)
     }
